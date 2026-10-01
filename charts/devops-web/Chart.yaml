@@ -1,0 +1,13 @@
+apiVersion: v2
+
+name: devops-web
+
+description: Production-style Helm deployment project for AKS
+
+type: application
+
+# Helm chart version
+version: 0.2.0
+
+# Application version
+appVersion: "1.1.0"

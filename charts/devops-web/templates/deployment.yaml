@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: {{ .Release.Name }}
+
+  labels:
+    app: {{ .Release.Name }}
+
+spec:
+
+  # Number of replicas comes from values.yaml
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+
+  strategy:
+    type: RollingUpdate
+
+  template:
+
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+
+    spec:
+
+      containers:
+
+        - name: nginx
+
+          # Image settings come from the Helm values
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          ports:
+
+            - containerPort: {{ .Values.container.port }}
+
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+
+          readinessProbe:
+
+            httpGet:
+              path: /
+              port: {{ .Values.container.port }}
+
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+
+            httpGet:
+              path: /
+              port: {{ .Values.container.port }}
+
+            initialDelaySeconds: 15
+            periodSeconds: 20
